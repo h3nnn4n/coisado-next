@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'addPlayer.ui'
 #
-# Created: Fri May 23 16:30:39 2014
+# Created: Fri May 23 20:34:23 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,6 +63,7 @@ class Ui_newPlayer(object):
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.comboBoxSex = QtGui.QComboBox(newPlayer)
         self.comboBoxSex.setGeometry(QtCore.QRect(280, 40, 73, 28))
+        self.comboBoxSex.setEditable(False)
         self.comboBoxSex.setObjectName(_fromUtf8("comboBoxSex"))
         self.comboBoxSex.addItem(_fromUtf8(""))
         self.comboBoxSex.addItem(_fromUtf8(""))
@@ -85,6 +86,6 @@ class Ui_newPlayer(object):
         self.comboBoxTitle.setItemText(6, _translate("newPlayer", "Outro", None))
         self.label_3.setText(_translate("newPlayer", "Titulo", None))
         self.label_4.setText(_translate("newPlayer", "Sexo", None))
-        self.comboBoxSex.setItemText(0, _translate("newPlayer", "Masc.", None))
-        self.comboBoxSex.setItemText(1, _translate("newPlayer", "Fem.", None))
+        self.comboBoxSex.setItemText(0, _translate("newPlayer", "Masc", None))
+        self.comboBoxSex.setItemText(1, _translate("newPlayer", "Fem", None))
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main.ui'
 #
-# cREATED: fRI mAY 23 20:34:23 2014
+# Created: Fri May 23 12:19:36 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,29 +26,20 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(776, 543)
+        MainWindow.resize(800, 600)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.frame = QtGui.QFrame(self.centralwidget)
-        self.frame.setGeometry(QtCore.QRect(0, 0, 771, 501))
-        self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
-        self.frame.setFrameShadow(QtGui.QFrame.Raised)
-        self.frame.setObjectName(_fromUtf8("frame"))
-        self.tableWidgetPlayer = QtGui.QTableWidget(self.frame)
-        self.tableWidgetPlayer.setGeometry(QtCore.QRect(0, 0, 771, 501))
-        self.tableWidgetPlayer.setObjectName(_fromUtf8("tableWidgetPlayer"))
-        self.tableWidgetPlayer.setColumnCount(0)
-        self.tableWidgetPlayer.setRowCount(0)
+        self.pushButton = QtGui.QPushButton(self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(510, 150, 85, 27))
+        self.pushButton.setObjectName(_fromUtf8("pushButton"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 776, 18))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 18))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuArquivo = QtGui.QMenu(self.menubar)
         self.menuArquivo.setObjectName(_fromUtf8("menuArquivo"))
         self.menuSobre = QtGui.QMenu(self.menubar)
         self.menuSobre.setObjectName(_fromUtf8("menuSobre"))
-        self.menuJogadores = QtGui.QMenu(self.menubar)
-        self.menuJogadores.setObjectName(_fromUtf8("menuJogadores"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -57,19 +48,9 @@ class Ui_MainWindow(object):
         self.actionSair.setObjectName(_fromUtf8("actionSair"))
         self.actionSobre = QtGui.QAction(MainWindow)
         self.actionSobre.setObjectName(_fromUtf8("actionSobre"))
-        self.actionAdicionar = QtGui.QAction(MainWindow)
-        self.actionAdicionar.setObjectName(_fromUtf8("actionAdicionar"))
-        self.actionAbrir = QtGui.QAction(MainWindow)
-        self.actionAbrir.setObjectName(_fromUtf8("actionAbrir"))
-        self.actionNovo = QtGui.QAction(MainWindow)
-        self.actionNovo.setObjectName(_fromUtf8("actionNovo"))
         self.menuArquivo.addAction(self.actionSair)
         self.menuSobre.addAction(self.actionSobre)
-        self.menuJogadores.addAction(self.actionAbrir)
-        self.menuJogadores.addAction(self.actionNovo)
-        self.menuJogadores.addAction(self.actionAdicionar)
         self.menubar.addAction(self.menuArquivo.menuAction())
-        self.menubar.addAction(self.menuJogadores.menuAction())
         self.menubar.addAction(self.menuSobre.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -77,12 +58,9 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
+        self.pushButton.setText(_translate("MainWindow", "Sair", None))
         self.menuArquivo.setTitle(_translate("MainWindow", "Arquivo", None))
         self.menuSobre.setTitle(_translate("MainWindow", "Ajuda", None))
-        self.menuJogadores.setTitle(_translate("MainWindow", "Jogadores", None))
         self.actionSair.setText(_translate("MainWindow", "Sair", None))
         self.actionSobre.setText(_translate("MainWindow", "Sobre", None))
-        self.actionAdicionar.setText(_translate("MainWindow", "Adicionar", None))
-        self.actionAbrir.setText(_translate("MainWindow", "Abrir", None))
-        self.actionNovo.setText(_translate("MainWindow", "Novo", None))
 
