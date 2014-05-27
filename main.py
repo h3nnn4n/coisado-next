@@ -1,13 +1,13 @@
 import sys
 import sqlite3
 from PyQt4 import * #QtCore, QtGui
-
-from mainWindow import *
-from aboutPage import *
-from addPlayer import *
+from Database import *
+from ui.mainWindow import *
+from ui.aboutPage import *
+from ui.addPlayer import *
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
-    def __init__(self, parent =None):
+    def __init__(self, parent = None):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
         self.actionSair.triggered.connect(self.sair)
@@ -15,18 +15,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionAbrir.triggered.connect(self.loadPlayer)
         self.actionNovo.triggered.connect(self.newPlayerSave)
         self.actionAdicionar.triggered.connect(self.insertPlayer)
-        self.conn=None
-        self.dbPath=None
+        self.db = None
 
         self.tableWidgetPlayer.setColumnCount(6)
         self.tableWidgetPlayer.setRowCount(0)
-
+        self.tableWidgetPlayer.verticalHeader().hide()
+        self.tableWidgetPlayer.horizontalHeader().hide()
     def atualizar(self):
         print("Opening " + self.dbPath)
-        self.conn=sqlite3.connect(self.dbPath)
-        c=self.conn.cursor()
-        c.execute('select * from players')
-        data=c.fetchall()
+        self.db = DB(self.dbPath)
+        data = self.db.selectAllPlayers()
         self.tableWidgetPlayer.clear()
         for i, item in enumerate(data):
             self.tableWidgetPlayer.insertRow(i)
@@ -39,7 +37,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             btn = QtGui.QPushButton(self)
             btn.setText('Atualizar')
             self.tableWidgetPlayer.setCellWidget(i, 4, btn)
-        self.conn.close()
 
     def sair(self):
         self.close()
@@ -49,11 +46,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         sobre.exec_()
 
     def loadPlayer(self):
-        self.dbPath=QtGui.QFileDialog.getOpenFileName(self,'Open file', '.')
+        self.dbPath = QtGui.QFileDialog.getOpenFileName(self,'Open file', '.')
         self.atualizar()
 
     def insertPlayer(self):
-        window=addPlayer(self.dbPath)
+        window=addPlayer(self.db)
         window.exec_()
         self.atualizar()
 
@@ -61,48 +58,41 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.error=None
         try:
             self.dbPath=QtGui.QFileDialog.getOpenFileName(self,'Open file', '.')
-            self.conn=sqlite3.connect(self.dbPath)
-            self.conn.execute("create table players (Player text, Rating text, Sex text, Title text)")
-            self.conn.commit()
-            self.conn.close()
+            self.db = DB(self.dbPath)
+            self.db.createTables()
         except sqlite3.OperationalError as e:
             error="Error:\n%s" % e
-
         if error:
             QtGui.QMessageBox.critical(self, "Error!",error, QtGui.QMessageBox.Ok)
 
 
 class addPlayer(QtGui.QDialog, Ui_newPlayer):
-    def __init__(self, dbPath, parent=None):
+    def __init__(self, db, parent=None):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
         self.buttonOk.clicked.connect(self.confirm)
         self.buttonCancel.clicked.connect(self.cancel)
         self.txtBoxPlayerName.setPlaceholderText("Nome Completo")
         self.txtBoxPlayerRating.setPlaceholderText("1500")
-        self.dbPath=dbPath
+        self.db = db
 
     def confirm(self):
-        error=None
-        print(self.txtBoxPlayerName.displayText())
-        commit="insert into players values(\"%s\",\"%s\",\"%s\",\"%s\")" % (\
-        self.txtBoxPlayerName.displayText(),\
-        self.txtBoxPlayerRating.displayText(),\
-        str(self.comboBoxTitle.currentText()),\
-        str(self.comboBoxSex.currentText()))
-        print(commit)
+        error = None
+        player = []
+        player.append(self.txtBoxPlayerName.displayText())
+        player.append(self.txtBoxPlayerRating.displayText())
+        player.append(str(self.comboBoxTitle.currentText()))
+        player.append(str(self.comboBoxSex.currentText()))
+        
         try:
-            self.conn=sqlite3.connect(self.dbPath)
-            self.conn.execute(commit)
-            self.conn.commit()
-            self.conn.close()
+            self.db.insertPlayer(player)
         except sqlite3.OperationalError as e:
             error="Error:\n%s" % e
 
         if error:
             QtGui.QMessageBox.critical(self, "Error!", error, QtGui.QMessageBox.Ok)
 
-        self.close()   
+        self.close()
 
     def cancel(self):
         self.close()
@@ -114,10 +104,9 @@ class aboutPage(QtGui.QDialog, Ui_Sobre):
         self.labelLogo.setPixmap(QtGui.QPixmap('nextlogo.jpg'))
         self.labelLogo.setScaledContents(True)
 
-def main():
+if __name__ == "__main__":
     app=QtGui.QApplication(sys.argv)
     window=MainWindow()
     window.show()
     sys.exit(app.exec_())
 
-main()
