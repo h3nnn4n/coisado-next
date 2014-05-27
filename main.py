@@ -1,5 +1,4 @@
 import sys
-import sqlite3
 from PyQt4 import * #QtCore, QtGui
 from Database import *
 from ui.mainWindow import *
@@ -21,22 +20,28 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tableWidgetPlayer.setRowCount(0)
         self.tableWidgetPlayer.verticalHeader().hide()
         self.tableWidgetPlayer.horizontalHeader().hide()
+    
     def atualizar(self):
         print("Opening " + self.dbPath)
-        self.db = DB(self.dbPath)
-        data = self.db.selectAllPlayers()
-        self.tableWidgetPlayer.clear()
-        for i, item in enumerate(data):
-            self.tableWidgetPlayer.insertRow(i)
-            for j in range(0,4):
-                add=newitem = QtGui.QTableWidgetItem(data[i][j])
-                self.tableWidgetPlayer.setItem(i,j,add)                
-            btn = QtGui.QPushButton(self)
-            btn.setText('Remover')
-            self.tableWidgetPlayer.setCellWidget(i, 5, btn)
-            btn = QtGui.QPushButton(self)
-            btn.setText('Atualizar')
-            self.tableWidgetPlayer.setCellWidget(i, 4, btn)
+        try:
+            self.db = DB(self.dbPath)
+        except OpenDBError as e:
+            msg = "Erro ao abrir o arquivo " + self.dbPath + "." 
+            QtGui.QMessageBox.critical(self, "Erro!", msg, QtGui.QMessageBox.Ok)
+        else:
+            data = self.db.selectAllPlayers()
+            self.tableWidgetPlayer.clear()
+            for i, item in enumerate(data):
+                self.tableWidgetPlayer.insertRow(i)
+                for j in range(0,4):
+                    add=newitem = QtGui.QTableWidgetItem(data[i][j])
+                    self.tableWidgetPlayer.setItem(i,j,add)                
+                btn = QtGui.QPushButton(self)
+                btn.setText('Remover')
+                self.tableWidgetPlayer.setCellWidget(i, 5, btn)
+                btn = QtGui.QPushButton(self)
+                btn.setText('Atualizar')
+                self.tableWidgetPlayer.setCellWidget(i, 4, btn)
 
     def sair(self):
         self.close()
@@ -86,7 +91,7 @@ class addPlayer(QtGui.QDialog, Ui_newPlayer):
         
         try:
             self.db.insertPlayer(player)
-        except sqlite3.OperationalError as e:
+        except UnselectedDBError as e:
             error="Error:\n%s" % e
 
         if error:
