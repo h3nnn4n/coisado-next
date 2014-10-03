@@ -1,52 +1,33 @@
-#!/usr/bin/python2.7
+div = ["Carlsen","Caruana","Aronian","Anand","Nakamura"]
 
-div1 = ["aaa", "aa", "aaaa"]
-div2 = ["bbbb", "bbb", "bb"]
-div3 = ["cccc", "ccc", "cc"]
-
-def create_schedule(list):
-    """ Create a schedule for the teams in the list and return it"""
+def create_schedule(L):
     s = []
 
-    if len(list) % 2 == 1: list = list + ["BYE"]
+    if len(L) % 2 == 1: L = L + ["BYE"]
 
-    for i in range(len(list)-1):
+    for i in range(len(L)-1):
 
-        mid = len(list) / 2
-        l1 = list[:mid]
-        l2 = list[mid:]
+        mid = len(L) / 2
+        l1 = L[:int(mid)]
+        l2 = L[int(mid):]
         l2.reverse()
 
-        # Switch sides after each round
         if(i % 2 == 1):
             s = s + [ zip(l1, l2) ]
         else:
             s = s + [ zip(l2, l1) ]
 
-        list.insert(1, list.pop())
+        L.insert(1, L.pop())
 
     return s
 
 
 def main():
-    print "\nDiv1\n"
-    for round in create_schedule(div1):
+    print("\nDiv1\n")
+    for round in create_schedule(div):
         for match in round:
             print(match[0] + " - " + match[1])
-    print "\nDiv2\n"
-    for round in create_schedule(div2):
-        for match in round:
-            print(match[0] + " - " + match[1])
-    print "\nDiv3\n"
-    for round in create_schedule(div3):
-        for match in round:
-            print(match[0] + " - " + match[1])
-    print "\nDiv1 + Div2 +Div3\n"
-    for round in create_schedule(div1+div2+div3):
-        for match in round:
-            print(match[0] + " - " + match[1])
-        print
-
+        print("")
 
 if __name__ == "__main__":
     main()
