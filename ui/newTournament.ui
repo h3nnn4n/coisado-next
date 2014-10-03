@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>newTournament</class>
+ <widget class="QDialog" name="newTournament">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>662</width>
+    <height>455</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>661</width>
+     <height>451</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QTableWidget" name="tableWidgetPlayers">
+    <property name="geometry">
+     <rect>
+      <x>4</x>
+      <y>44</y>
+      <width>651</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>771</width>
+      <height>471</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame_2">
+    <property name="geometry">
+     <rect>
+      <x>4</x>
+      <y>1</y>
+      <width>651</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="buttonImport">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>91</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Importar</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="buttonEmparcerar">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>10</y>
+       <width>89</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Emparcerar</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="buttonDelete">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>10</y>
+       <width>89</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Remover</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

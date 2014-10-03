@@ -1,5 +1,6 @@
 #!/bin/bash
 
-pyuic4 mainWindow.ui >> mainWindow.py
-pyuic4 aboutPage.ui >> aboutPage.py
-pyuic4 addPlayer.ui >> addPlayer.py
+pyuic4 mainWindow.ui > mainWindow.py
+pyuic4 aboutPage.ui > aboutPage.py
+pyuic4 addPlayer.ui > addPlayer.py
+pyuic4 newTournament.ui > newTournament.py

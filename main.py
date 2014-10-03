@@ -1,9 +1,10 @@
 import sys
-from PyQt4 import * #QtCore, QtGui
+from PyQt4 import *
 from Database import *
 from ui.mainWindow import *
 from ui.aboutPage import *
 from ui.addPlayer import *
+from ui.newTournament import *
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent = None):
@@ -14,19 +15,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionAbrir.triggered.connect(self.loadPlayer)
         self.actionNovo.triggered.connect(self.newPlayerSave)
         self.actionAdicionar.triggered.connect(self.insertPlayer)
+        self.buttonNovoTorneio.clicked.connect(self.novoTorneio)
+        self.buttonRemover.clicked.connect(self.removerSelecionado)
         self.db = None
 
         self.tableWidgetPlayer.setColumnCount(6)
         self.tableWidgetPlayer.setRowCount(0)
         self.tableWidgetPlayer.verticalHeader().hide()
         self.tableWidgetPlayer.horizontalHeader().hide()
-    
+        self.tableWidgetPlayer.setSelectionBehavior(self.tableWidgetPlayer.SelectRows)
+
     def atualizar(self):
         print("Opening " + self.dbPath)
         try:
             self.db = DB(self.dbPath)
         except OpenDBError as e:
-            msg = "Erro ao abrir o arquivo " + self.dbPath + "." 
+            msg = "Erro ao abrir o arquivo " + self.dbPath + "."
             QtGui.QMessageBox.critical(self, "Erro!", msg, QtGui.QMessageBox.Ok)
         else:
             data = self.db.selectAllPlayers()
@@ -35,13 +39,31 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.tableWidgetPlayer.insertRow(i)
                 for j in range(0,4):
                     add=newitem = QtGui.QTableWidgetItem(data[i][j])
-                    self.tableWidgetPlayer.setItem(i,j,add)                
+                    self.tableWidgetPlayer.setItem(i,j,add)
+
                 btn = QtGui.QPushButton(self)
                 btn.setText('Remover')
+                btn.clicked.connect(self.removerSelecionado)
                 self.tableWidgetPlayer.setCellWidget(i, 5, btn)
+
                 btn = QtGui.QPushButton(self)
                 btn.setText('Atualizar')
+                # btn.clicked.connect(self.removerSelecionado)
                 self.tableWidgetPlayer.setCellWidget(i, 4, btn)
+
+    def removerSelecionado(self):
+        rows=self.tableWidgetPlayer.selectionModel().selectedRows()
+        for r in rows:
+            print(r.item(0,0))
+            # TODO
+            # remover da db o item selecionado
+            player=""
+            self.db.deletePlayer(player)
+            self.tableWidgetPlayer.removeRow(r.row())
+
+    def novoTorneio(self):
+        tournament=newTournament(self.db)
+        tournament.exec_()
 
     def sair(self):
         self.close()
@@ -70,7 +92,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         if error:
             QtGui.QMessageBox.critical(self, "Error!",error, QtGui.QMessageBox.Ok)
 
-
 class addPlayer(QtGui.QDialog, Ui_newPlayer):
     def __init__(self, db, parent=None):
         QtGui.QDialog.__init__(self)
@@ -88,7 +109,7 @@ class addPlayer(QtGui.QDialog, Ui_newPlayer):
         player.append(self.txtBoxPlayerRating.displayText())
         player.append(str(self.comboBoxTitle.currentText()))
         player.append(str(self.comboBoxSex.currentText()))
-        
+
         try:
             self.db.insertPlayer(player)
         except UnselectedDBError as e:
@@ -109,9 +130,57 @@ class aboutPage(QtGui.QDialog, Ui_Sobre):
         self.labelLogo.setPixmap(QtGui.QPixmap('nextlogo.jpg'))
         self.labelLogo.setScaledContents(True)
 
+class newTournament(QtGui.QDialog, Ui_newTournament):
+    def __init__(self,db,parent=None):
+        QtGui.QDialog.__init__(self)
+        self.setupUi(self)
+        self.buttonEmparcerar.clicked.connect(self.emparcerar)
+        self.players=[]
+        self.db=db
+
+    def deleteSelecionado(self):
+        rows=self.tableWidgetPlayers.selectionModel().SelectRows()
+        for r in rows:
+            # TODO
+            # Remove from database
+            self.tableWidgetPlayers.removeRow(r.rows())
+
+    def emparcerar(self):
+        data=self.db.selectAllPlayers()
+        for i in enumerate(data):
+            self.players.append(i[1][0])
+
+        print("The players are: ", end="")
+        if len(self.players) % 2 == 1: self.players.append("BYE")
+        for i in self.players:
+            print(i,end=" + ")
+        print("\n")
+
+        s=[]
+
+        for i in range(len(self.players)-1):
+
+            mid = len(self.players) / 2
+            l1 = self.players[:int(mid)]
+            l2 = self.players[int(mid):]
+            l2.reverse()
+
+            if(i % 2 == 1):
+                s = s + [ zip(l1, l2) ]
+            else:
+                s = s + [ zip(l2, l1) ]
+
+            self.players.insert(1, self.players.pop())
+
+        for round in s:
+            for match in round:
+                print(match[0] + " vs " + match[1])
+            print("")
+
+
+
 if __name__ == "__main__":
     app=QtGui.QApplication(sys.argv)
     window=MainWindow()
     window.show()
     sys.exit(app.exec_())
-
