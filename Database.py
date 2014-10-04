@@ -13,7 +13,7 @@ class OpenDBError(Exception):
 
 class UnselectedDBError(Exception):
     pass
-    
+
 class DB():
     def __init__(self, dbPath):
         error = None
@@ -33,9 +33,10 @@ class DB():
             self.cursor = None
             self.conn = None
             raise OpenDBError("Error opening file: " + str(error))
-    
+
     def isSelected(self):
         return self.dbPath != None
+
 
     def checkDBFile(self):
         error = None
@@ -47,13 +48,13 @@ class DB():
         else:
             return True
 
-    def __del__(self): 
+    def __del__(self):
         try:
             self.conn.close()
         except Exception as e:
             print(e)
             exit(1)
-    
+
     def createTables(self):
         if self.isSelected():
             query = "CREATE TABLE IF NOT EXISTS PLAYERS (player TEXT, rating INT, sex TEXT, title TEXT)"
@@ -86,6 +87,13 @@ class DB():
                 exit(1)
         else:
             raise UnselectedDBError("No database file selected.")
+
+    def deletePlayer(self, player):
+        pass
+        query = ""
+        self.cursor.execute(query)
+        self.conn.commit()
+
 
 if __name__ == "__main__":
     # Testes

@@ -135,8 +135,129 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
         self.buttonEmparcerar.clicked.connect(self.emparcerar)
+        self.buttonPrev.clicked.connect(self.prevRound)
+        self.buttonNext.clicked.connect(self.nextRound)
+        self.buttonQuit.clicked.connect(self.sair)
+        self.buttonWhiteWins.clicked.connect(self.whiteWins)
+        self.buttonBlackWins.clicked.connect(self.blackWins)
+        self.buttonDraws.clicked.connect(self.draws)
+
+        self.tableWidgetPlayers.setColumnCount(5)
+        self.tableWidgetPlayers.setRowCount(1)
+        self.tableWidgetPlayers.setSelectionBehavior(self.tableWidgetPlayers.SelectRows)
+
         self.players=[]
+        self.points=[]
+        self.rounds=[]
+        self.nrounds=-1
         self.db=db
+
+        self.is_emparcered=0
+        self.active_round=0
+
+    def whiteWins(self):
+        rows=self.tableWidgetPlayers.selectionModel().selectedRows()
+        for r in rows:
+            print(r.data())
+
+        for i in range(0,len(self.players)-1):
+            if r.data()==self.players[i]:
+                self.points[i]+=1
+
+        for i in range(0,len(self.players)-1):
+            print(self.players[i]+" "+str(self.points[i]))
+
+        self.showRound()
+
+    def blackWins(self):
+        rows=self.tableWidgetPlayers.selectedItems()
+        print("-> ",end="")
+        print(rows[1].data(0))
+
+        for i in range(0,len(self.players)-1):
+            print(rows[1].data(0))
+            if str(rows[1].data(0))==self.players[i]:
+                self.points[i]+=1
+
+        for i in range(0,len(self.players)-1):
+            print(self.players[i]+" "+str(self.points[i]))
+
+        self.showRound()
+
+    def draws(self):
+        rows=self.tableWidgetPlayers.selectedItems()
+        for r in rows:
+            print(r.data(0))
+
+    def pointTo(self,name,p):
+        for i,n in enumerate(self.players):
+            if n==name:
+                self.rounds[i]+=p
+
+    def showRound(self):
+        self.tableWidgetPlayers.setColumnCount(5)
+        self.tableWidgetPlayers.setRowCount(0)
+        self.tableWidgetPlayers.clear()
+
+        rounds=self.rounds[self.active_round]
+
+        l=len(rounds[0])
+
+        print(self.players)
+
+        for i in range(0,l):
+            print(rounds[0][i]+" vs "+rounds[1][i])
+
+            self.tableWidgetPlayers.insertRow(i)
+
+            add=QtGui.QTableWidgetItem(rounds[0][i])
+            self.tableWidgetPlayers.setItem(i,0,add)
+
+            add=QtGui.QTableWidgetItem(rounds[1][i])
+            self.tableWidgetPlayers.setItem(i,4,add)
+
+            for j in range(0,len(self.players)-1):
+                if rounds[1][i]==self.players[j]:
+                    add=QtGui.QTableWidgetItem(str(self.points[j]))
+                    self.tableWidgetPlayers.setItem(i,3,add)
+
+            for j in range(0,len(self.players)-1):
+                if rounds[0][i]==self.players[j]:
+                    add=QtGui.QTableWidgetItem(str(self.points[j]))
+                    self.tableWidgetPlayers.setItem(i,1,add)
+
+            """btn = QtGui.QPushButton(self)
+            btn.setText('1 - 0')
+            btn.clicked.connect(self.showRound)
+            self.tableWidgetPlayers.setCellWidget(i, 1, btn)
+
+            btn = QtGui.QPushButton(self)
+            btn.setText('.5 - .5')
+            #btn.clicked.connect(self.removerSelecionado)
+            self.tableWidgetPlayers.setCellWidget(i, 2, btn)
+
+            btn = QtGui.QPushButton(self)
+            btn.setText('0 - 1')
+            #btn.clicked.connect(self.removerSelecionado)
+            self.tableWidgetPlayers.setCellWidget(i, 3, btn)
+            """
+
+    def nextRound(self):
+        if self.is_emparcered==1:
+            if self.active_round<self.nrounds:
+                self.active_round+=1
+                self.labelRound.setText("Round: " + str(self.active_round+1))
+                print("Round: " + str(self.active_round+1))
+                self.showRound()
+
+    def prevRound(self):
+        if self.is_emparcered==1:
+            if self.active_round>0:
+                self.active_round-=1
+                self.labelRound.setText("Round: " + str(self.active_round+1))
+                print("Round: " + str(self.active_round+1))
+                self.showRound()
+
 
     def deleteSelecionado(self):
         rows=self.tableWidgetPlayers.selectionModel().SelectRows()
@@ -156,28 +277,39 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             print(i,end=" + ")
         print("\n")
 
-        s=[]
+        self.rounds=[]
+        self.nrounds=0
 
         for i in range(len(self.players)-1):
-
+            self.nrounds+=1
             mid = len(self.players) / 2
             l1 = self.players[:int(mid)]
             l2 = self.players[int(mid):]
             l2.reverse()
 
+            l3=[]
+
             if(i % 2 == 1):
-                s = s + [ zip(l1, l2) ]
+                l3.append(l1)
+                l3.append(l2)
+                self.rounds.append(l3)
             else:
-                s = s + [ zip(l2, l1) ]
+                l3.append(l2)
+                l3.append(l1)
+                self.rounds.append(l3)
 
             self.players.insert(1, self.players.pop())
 
-        for round in s:
-            for match in round:
-                print(match[0] + " vs " + match[1])
-            print("")
+        self.is_emparcered=1
+        self.labelRound.setText("Round: " + str(self.active_round+1))
 
+        for i in range(len(self.players)):
+            self.points.append(0)
 
+        self.showRound()
+
+    def sair(self):
+        self.close()
 
 if __name__ == "__main__":
     app=QtGui.QApplication(sys.argv)
