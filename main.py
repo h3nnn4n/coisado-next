@@ -169,25 +169,33 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
 
         self.showRound()
 
-    def blackWins(self):
+    def draws(self):
         rows=self.tableWidgetPlayers.selectedItems()
-        print("-> ",end="")
-        print(rows[1].data(0))
 
-        for i in range(0,len(self.players)-1):
-            print(rows[1].data(0))
-            if str(rows[1].data(0))==self.players[i]:
-                self.points[i]+=1
+        for i in range(0,len(rows)):
+            for j in range(0,len(self.players)-1):
+                if str(rows[i].data(0))==self.players[j]:
+                    self.points[j]+=0.5
 
+        print("---")
         for i in range(0,len(self.players)-1):
             print(self.players[i]+" "+str(self.points[i]))
 
         self.showRound()
 
-    def draws(self):
+    def blackWins(self):
         rows=self.tableWidgetPlayers.selectedItems()
-        for r in rows:
-            print(r.data(0))
+
+        for i in range(1,len(rows)):
+            for j in range(0,len(self.players)-1):
+                if str(rows[i].data(0))==self.players[j]:
+                    self.points[j]+=1
+
+        print("---")
+        for i in range(0,len(self.players)-1):
+            print(self.players[i]+" "+str(self.points[i]))
+
+        self.showRound()
 
     def pointTo(self,name,p):
         for i,n in enumerate(self.players):
