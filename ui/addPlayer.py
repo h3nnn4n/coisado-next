@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'addPlayer.ui'
 #
-# Created: Tue Oct  7 23:36:42 2014
+# Created: Sat Oct 25 11:05:02 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
