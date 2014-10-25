@@ -74,14 +74,27 @@
     <widget class="QPushButton" name="buttonNovoTorneio">
      <property name="geometry">
       <rect>
-       <x>178</x>
-       <y>3</y>
+       <x>179</x>
+       <y>2</y>
        <width>89</width>
-       <height>25</height>
+       <height>27</height>
       </rect>
      </property>
      <property name="text">
       <string>Criar torneio</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="buttonSair">
+     <property name="geometry">
+      <rect>
+       <x>678</x>
+       <y>3</y>
+       <width>89</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Fechar</string>
      </property>
     </widget>
    </widget>

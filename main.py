@@ -11,6 +11,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self)
         self.setupUi(self)
         self.actionSair.triggered.connect(self.sair)
+        self.buttonSair.clicked.connect(self.sair)
         self.actionSobre.triggered.connect(self.about)
         self.actionAbrir.triggered.connect(self.loadPlayer)
         self.actionNovo.triggered.connect(self.newPlayerSave)
@@ -25,11 +26,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tableWidgetPlayer.horizontalHeader().hide()
         self.tableWidgetPlayer.setSelectionBehavior(self.tableWidgetPlayer.SelectRows)
 
+        self.loadPlayer()
+        self.novoTorneio()
+
     def atualizar(self):
         print("Opening " + self.dbPath)
         try:
             self.db = DB(self.dbPath)
-        except OpenDBError as e:
+        except OpenDBError:
             msg = "Erro ao abrir o arquivo " + self.dbPath + "."
             QtGui.QMessageBox.critical(self, "Erro!", msg, QtGui.QMessageBox.Ok)
         else:
@@ -38,7 +42,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             for i, item in enumerate(data):
                 self.tableWidgetPlayer.insertRow(i)
                 for j in range(0,4):
-                    add=newitem = QtGui.QTableWidgetItem(data[i][j])
+                    add=QtGui.QTableWidgetItem(data[i][j])
                     self.tableWidgetPlayer.setItem(i,j,add)
 
                 btn = QtGui.QPushButton(self)
@@ -89,8 +93,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.db.createTables()
         except sqlite3.OperationalError as e:
             error="Error:\n%s" % e
-        if error:
-            QtGui.QMessageBox.critical(self, "Error!",error, QtGui.QMessageBox.Ok)
+            if error:
+                QtGui.QMessageBox.critical(self, "Error!",error, QtGui.QMessageBox.Ok)
 
 class addPlayer(QtGui.QDialog, Ui_newPlayer):
     def __init__(self, db, parent=None):
@@ -144,10 +148,14 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
 
         self.tableWidgetPlayers.setColumnCount(5)
         self.tableWidgetPlayers.setRowCount(1)
+        self.tableWidgetPlayers.verticalHeader().hide()
+        self.tableWidgetPlayers.horizontalHeader().hide()
         self.tableWidgetPlayers.setSelectionBehavior(self.tableWidgetPlayers.SelectRows)
 
         self.players=[]
         self.points=[]
+        self.totalpoints=[]
+        self.flag=[]
         self.rounds=[]
         self.nrounds=-1
         self.db=db
@@ -155,52 +163,83 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.is_emparcered=0
         self.active_round=0
 
+        self.emparcerar()
+
     def whiteWins(self):
-        rows=self.tableWidgetPlayers.selectionModel().selectedRows()
-        for r in rows:
-            print(r.data())
+        rows=self.tableWidgetPlayers.selectedItems()
 
-        for i in range(0,len(self.players)-1):
-            if r.data()==self.players[i]:
-                self.points[i]+=1
+        index=self.players.index(rows[0].data(0))
+        if self.players[index]!="BYE":
+            print("index="+str(index))
 
-        for i in range(0,len(self.players)-1):
-            print(self.players[i]+" "+str(self.points[i]))
+            self.points[self.active_round][index]=1
+
+            for i in range(1,len(rows)):
+                for j in range(0,len(self.players)-1):
+                    if str(rows[i].data(0))==self.players[j]:
+                        self.points[self.active_round][j]=0
+
+                    else:
+                        pass
 
         self.showRound()
 
     def draws(self):
         rows=self.tableWidgetPlayers.selectedItems()
 
-        for i in range(0,len(rows)):
-            for j in range(0,len(self.players)-1):
-                if str(rows[i].data(0))==self.players[j]:
-                    self.points[j]+=0.5
+        flag=1
 
-        print("---")
-        for i in range(0,len(self.players)-1):
-            print(self.players[i]+" "+str(self.points[i]))
+        for i in range(0,len(rows)):
+            if str(rows[i].data(0))=="BYE":
+                flag=0
+
+        if flag==1:
+            for i in range(0,len(rows)):
+                for j in range(0,len(self.players)-1):
+                    if str(rows[i].data(0))==self.players[j]:
+                        self.points[self.active_round][j]=0.5
 
         self.showRound()
 
     def blackWins(self):
         rows=self.tableWidgetPlayers.selectedItems()
 
+        index=self.players.index(rows[0].data(0))
+
+        self.points[self.active_round][index]=0
+
         for i in range(1,len(rows)):
             for j in range(0,len(self.players)-1):
                 if str(rows[i].data(0))==self.players[j]:
-                    self.points[j]+=1
-
-        print("---")
-        for i in range(0,len(self.players)-1):
-            print(self.players[i]+" "+str(self.points[i]))
+                    self.points[self.active_round][j]=1
 
         self.showRound()
 
-    def pointTo(self,name,p):
-        for i,n in enumerate(self.players):
-            if n==name:
-                self.rounds[i]+=p
+    def byePoints(self):
+        flag=0
+        j=self.active_round
+        if self.active_round<=self.nrounds:
+            for k in range(0,len(self.rounds[j][0])):
+                if self.rounds[j][1][k]=="BYE":
+                    flag=1
+                    index=self.players.index(self.rounds[j][0][k])
+                elif self.rounds[j][0][k]=="BYE":
+                    flag=1
+                    index=self.players.index(self.rounds[j][1][k])
+
+        if flag==1:
+            self.points[self.active_round][index]=1
+
+    def showScore(self):
+        self.tableWidgetPlayers.setColumnCount(5)
+        self.tableWidgetPlayers.setRowCount(0)
+        self.tableWidgetPlayers.clear()
+
+        for j in range(0,len(self.players)):
+            add=QtGui.QTableWidgetItem(str(self.players[j]))
+            self.tableWidgetPlayers.setItem(j,1,add)
+            add=QtGui.QTableWidgetItem(str(self.points[self.active_round][j]))
+            self.tableWidgetPlayers.setItem(j,2,add)
 
     def showRound(self):
         self.tableWidgetPlayers.setColumnCount(5)
@@ -209,12 +248,15 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
 
         rounds=self.rounds[self.active_round]
 
-        l=len(rounds[0])
-
+        print("Players:")
         print(self.players)
 
-        for i in range(0,l):
-            print(rounds[0][i]+" vs "+rounds[1][i])
+        print("Points:")
+        print(self.points[self.active_round])
+
+        print("-------------")
+        for i in range(0,len(self.rounds[0])):
+            #print(rounds[0][i]+" vs "+rounds[1][i])
 
             self.tableWidgetPlayers.insertRow(i)
 
@@ -224,39 +266,41 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             add=QtGui.QTableWidgetItem(rounds[1][i])
             self.tableWidgetPlayers.setItem(i,4,add)
 
-            for j in range(0,len(self.players)-1):
+            for j in range(0,len(self.players)):
                 if rounds[1][i]==self.players[j]:
-                    add=QtGui.QTableWidgetItem(str(self.points[j]))
+                    add=QtGui.QTableWidgetItem(str(self.points[self.active_round][j]))
                     self.tableWidgetPlayers.setItem(i,3,add)
 
-            for j in range(0,len(self.players)-1):
+            for j in range(0,len(self.players)):
                 if rounds[0][i]==self.players[j]:
-                    add=QtGui.QTableWidgetItem(str(self.points[j]))
+                    add=QtGui.QTableWidgetItem(str(self.points[self.active_round][j]))
                     self.tableWidgetPlayers.setItem(i,1,add)
 
-            """btn = QtGui.QPushButton(self)
-            btn.setText('1 - 0')
-            btn.clicked.connect(self.showRound)
-            self.tableWidgetPlayers.setCellWidget(i, 1, btn)
-
-            btn = QtGui.QPushButton(self)
-            btn.setText('.5 - .5')
-            #btn.clicked.connect(self.removerSelecionado)
-            self.tableWidgetPlayers.setCellWidget(i, 2, btn)
-
-            btn = QtGui.QPushButton(self)
-            btn.setText('0 - 1')
-            #btn.clicked.connect(self.removerSelecionado)
-            self.tableWidgetPlayers.setCellWidget(i, 3, btn)
-            """
-
     def nextRound(self):
+        nn=len(self.rounds[0])-1
         if self.is_emparcered==1:
             if self.active_round<self.nrounds:
-                self.active_round+=1
-                self.labelRound.setText("Round: " + str(self.active_round+1))
-                print("Round: " + str(self.active_round+1))
-                self.showRound()
+                print("")
+                flag=0
+                for i in range(0,len(self.points)):
+                    flag+=self.points[self.active_round][i]
+                    if flag==nn:
+                        flag=0
+                        print("here")
+                        self.labelRound.setText("Round: " + str(self.active_round+1))
+                        print("Round: " + str(self.active_round+1))
+
+                        for i in range(0,len(self.players)):
+                            self.totalpoints[i]+=self.points[self.active_round][i]
+                        #    self.points[i]=0
+
+                        self.active_round+=1
+
+                        self.byePoints()
+                        self.showRound()
+
+            elif self.active_round==self.nrounds:
+                self.showScore()
 
     def prevRound(self):
         if self.is_emparcered==1:
@@ -265,7 +309,6 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
                 self.labelRound.setText("Round: " + str(self.active_round+1))
                 print("Round: " + str(self.active_round+1))
                 self.showRound()
-
 
     def deleteSelecionado(self):
         rows=self.tableWidgetPlayers.selectionModel().SelectRows()
@@ -279,11 +322,11 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         for i in enumerate(data):
             self.players.append(i[1][0])
 
-        print("The players are: ", end="")
+        #print("The players are: ", end="")
         if len(self.players) % 2 == 1: self.players.append("BYE")
-        for i in self.players:
-            print(i,end=" + ")
-        print("\n")
+        #for i in self.players:
+        #    print(i,end=" + ")
+        #    print("\n")
 
         self.rounds=[]
         self.nrounds=0
@@ -311,9 +354,20 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.is_emparcered=1
         self.labelRound.setText("Round: " + str(self.active_round+1))
 
-        for i in range(len(self.players)):
-            self.points.append(0)
+        self.points=[]
+        for i in range(0,len(self.rounds)):
+            a=[]
+            for j in range(0,len(self.players)):
+                a.append(0)
+            self.points.append(a)
 
+        for i in range(len(self.players)):
+            #a=[-1 for i in range(0,len(self.rounds))]
+            self.totalpoints.append(0)
+            self.flag.append(a)
+            #self.points.append(0)
+
+        #self.byePoints()
         self.showRound()
 
     def sair(self):

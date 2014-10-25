@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'newTournament.ui'
 #
-# Created: Fri Oct  3 14:19:21 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Tue Oct  7 23:36:42 2014
+#      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 

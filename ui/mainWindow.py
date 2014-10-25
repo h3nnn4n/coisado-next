@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'mainWindow.ui'
 #
-# Created: Fri Oct  3 14:19:20 2014
-#      by: PyQt4 UI code generator 4.10.3
+# Created: Tue Oct  7 23:36:41 2014
+#      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -47,8 +47,11 @@ class Ui_MainWindow(object):
         self.buttonAtualizar.setGeometry(QtCore.QRect(90, 2, 85, 27))
         self.buttonAtualizar.setObjectName(_fromUtf8("buttonAtualizar"))
         self.buttonNovoTorneio = QtGui.QPushButton(self.frame)
-        self.buttonNovoTorneio.setGeometry(QtCore.QRect(178, 3, 89, 25))
+        self.buttonNovoTorneio.setGeometry(QtCore.QRect(179, 2, 89, 27))
         self.buttonNovoTorneio.setObjectName(_fromUtf8("buttonNovoTorneio"))
+        self.buttonSair = QtGui.QPushButton(self.frame)
+        self.buttonSair.setGeometry(QtCore.QRect(678, 3, 89, 27))
+        self.buttonSair.setObjectName(_fromUtf8("buttonSair"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 776, 21))
@@ -90,6 +93,7 @@ class Ui_MainWindow(object):
         self.buttonRemover.setText(_translate("MainWindow", "Remover", None))
         self.buttonAtualizar.setText(_translate("MainWindow", "Atualizar", None))
         self.buttonNovoTorneio.setText(_translate("MainWindow", "Criar torneio", None))
+        self.buttonSair.setText(_translate("MainWindow", "Fechar", None))
         self.menuArquivo.setTitle(_translate("MainWindow", "Arquivo", None))
         self.menuSobre.setTitle(_translate("MainWindow", "Ajuda", None))
         self.menuJogadores.setTitle(_translate("MainWindow", "Jogadores", None))
