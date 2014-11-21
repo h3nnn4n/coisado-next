@@ -255,31 +255,37 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.buttonScore.clicked.connect(self.showScore)
         self.buttonWhiteWins.clicked.connect(self.whiteWins)
 
+        self.tableWidgetPlayers.horizontalHeader().hide()
         self.tableWidgetPlayers.setColumnCount(5)
         self.tableWidgetPlayers.setRowCount(1)
-        self.tableWidgetPlayers.verticalHeader().hide()
-        self.tableWidgetPlayers.horizontalHeader().hide()
         self.tableWidgetPlayers.setSelectionBehavior(self.tableWidgetPlayers.SelectRows)
+        self.tableWidgetPlayers.verticalHeader().hide()
 
+        self.db=db
+        self.black=[]
+        self.flag=[]
         self.players=[]
         self.points=[]
-        self.totalpoints=[]
-        self.flag=[]
         self.rounds=[]
-        self.nrounds=-1
-        self.db=db
+        self.totalpoints=[]
         self.white=[]
-        self.black=[]
+        self.nrounds=-1
 
         self.rr=0
 
         self.pvp=[]
-        self.sbeger=[]
+        self.sberger=[]
 
         self.is_emparcered=0
         self.active_round=0
 
         #self.emparcerar()
+
+    #######
+    #
+    #  Brancas vencem
+    #
+    #######
 
     def whiteWins(self):
         rows=self.tableWidgetPlayers.selectedItems()
@@ -301,10 +307,43 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
 
         self.showRound()
 
+    #######
+    #
+    #  Negras vencem
+    #
+    #######
+
+    def blackWins(self):
+        rows=self.tableWidgetPlayers.selectedItems()
+
+        index=self.players.index(rows[0].data(0))
+
+        self.points[self.active_round][index]=0
+
+        sonne=[]
+
+        for i in range(1,len(rows)):
+            for j in range(0,len(self.players)):
+                #print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j])
+                if str(rows[i].data(0))==self.players[j]:
+                    sonne.append(j)
+                    #print("match")
+                    self.points[self.active_round][j]=1
+                    self.black[j]+=1
+
+        self.showRound()
+
+    #######
+    #
+    #  Empate
+    #
+    #######
+
     def draws(self):
         rows=self.tableWidgetPlayers.selectedItems()
 
         flag=1
+        sonne=[]
 
         for i in range(0,len(rows)):
             if str(rows[i].data(0))=="BYE":
@@ -314,26 +353,19 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             for i in range(0,len(rows)):
                 for j in range(0,len(self.players)):
                     if str(rows[i].data(0))==self.players[j]:
+                        sonne.append(j)
                         self.points[self.active_round][j]=0.5
 
-        self.showRound()
-
-    def blackWins(self):
-        rows=self.tableWidgetPlayers.selectedItems()
-
-        index=self.players.index(rows[0].data(0))
-
-        self.points[self.active_round][index]=0
-
-        for i in range(1,len(rows)):
-            for j in range(0,len(self.players)):
-                print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j])
-                if str(rows[i].data(0))==self.players[j]:
-                    print("match")
-                    self.points[self.active_round][j]=1
-                    self.black[j]+=1
+        self.sberger[sonne[0]][sonne[1]]+=0.5
+        self.sberger[sonne[1]][sonne[0]]+=0.5
 
         self.showRound()
+
+    #######
+    #
+    #  Atribui pontos ao jogador de BYE
+    #
+    #######
 
     def byePoints(self):
         flag=0
@@ -555,6 +587,16 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             self.white.append(0)
             self.black.append(0)
             #self.points.append(0)
+
+        a=[]
+        for i in range(len(self.players)):
+            self.sberger.append(0)
+            a.append(0)
+        for i in range(len(self.players)):
+            self.pvp.append(a)
+
+
+
 
         #self.byePoints()
         self.showRound()
