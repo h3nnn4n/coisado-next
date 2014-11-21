@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'newTournament.ui'
 #
-# Created: Sat Oct 25 11:05:03 2014
+# Created: Fri Nov 21 20:01:10 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,20 +26,20 @@ except AttributeError:
 class Ui_newTournament(object):
     def setupUi(self, newTournament):
         newTournament.setObjectName(_fromUtf8("newTournament"))
-        newTournament.resize(731, 454)
+        newTournament.resize(786, 451)
         self.frame = QtGui.QFrame(newTournament)
-        self.frame.setGeometry(QtCore.QRect(0, 0, 731, 451))
+        self.frame.setGeometry(QtCore.QRect(0, 0, 781, 451))
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame.setFrameShadow(QtGui.QFrame.Raised)
         self.frame.setObjectName(_fromUtf8("frame"))
         self.tableWidgetPlayers = QtGui.QTableWidget(self.frame)
-        self.tableWidgetPlayers.setGeometry(QtCore.QRect(4, 44, 721, 401))
+        self.tableWidgetPlayers.setGeometry(QtCore.QRect(4, 44, 771, 401))
         self.tableWidgetPlayers.setMaximumSize(QtCore.QSize(771, 471))
         self.tableWidgetPlayers.setObjectName(_fromUtf8("tableWidgetPlayers"))
         self.tableWidgetPlayers.setColumnCount(0)
         self.tableWidgetPlayers.setRowCount(0)
         self.frame_2 = QtGui.QFrame(self.frame)
-        self.frame_2.setGeometry(QtCore.QRect(4, 1, 721, 41))
+        self.frame_2.setGeometry(QtCore.QRect(4, 1, 771, 41))
         self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_2.setObjectName(_fromUtf8("frame_2"))
@@ -62,20 +62,30 @@ class Ui_newTournament(object):
         self.labelRound.setGeometry(QtCore.QRect(290, 14, 57, 14))
         self.labelRound.setObjectName(_fromUtf8("labelRound"))
         self.buttonQuit = QtGui.QPushButton(self.frame_2)
-        self.buttonQuit.setGeometry(QtCore.QRect(620, 6, 96, 27))
+        self.buttonQuit.setGeometry(QtCore.QRect(693, 6, 70, 27))
         self.buttonQuit.setObjectName(_fromUtf8("buttonQuit"))
         self.buttonWhiteWins = QtGui.QPushButton(self.frame_2)
-        self.buttonWhiteWins.setGeometry(QtCore.QRect(419, 8, 39, 25))
+        self.buttonWhiteWins.setGeometry(QtCore.QRect(492, 8, 39, 25))
         self.buttonWhiteWins.setObjectName(_fromUtf8("buttonWhiteWins"))
         self.buttonDraws = QtGui.QPushButton(self.frame_2)
-        self.buttonDraws.setGeometry(QtCore.QRect(460, 8, 48, 25))
+        self.buttonDraws.setGeometry(QtCore.QRect(533, 8, 48, 25))
         self.buttonDraws.setObjectName(_fromUtf8("buttonDraws"))
         self.buttonBlackWins = QtGui.QPushButton(self.frame_2)
-        self.buttonBlackWins.setGeometry(QtCore.QRect(510, 8, 39, 25))
+        self.buttonBlackWins.setGeometry(QtCore.QRect(583, 8, 39, 25))
         self.buttonBlackWins.setObjectName(_fromUtf8("buttonBlackWins"))
         self.buttonScore = QtGui.QPushButton(self.frame_2)
-        self.buttonScore.setGeometry(QtCore.QRect(550, 6, 69, 27))
+        self.buttonScore.setGeometry(QtCore.QRect(623, 7, 69, 26))
         self.buttonScore.setObjectName(_fromUtf8("buttonScore"))
+        self.boxRR = QtGui.QComboBox(self.frame_2)
+        self.boxRR.setGeometry(QtCore.QRect(420, 8, 70, 25))
+        self.boxRR.setObjectName(_fromUtf8("boxRR"))
+        self.boxRR.addItem(_fromUtf8(""))
+        self.boxRR.addItem(_fromUtf8(""))
+        self.boxRR.addItem(_fromUtf8(""))
+        self.boxRR.addItem(_fromUtf8(""))
+        self.label = QtGui.QLabel(self.frame_2)
+        self.label.setGeometry(QtCore.QRect(390, 14, 57, 14))
+        self.label.setObjectName(_fromUtf8("label"))
 
         self.retranslateUi(newTournament)
         QtCore.QMetaObject.connectSlotsByName(newTournament)
@@ -93,4 +103,9 @@ class Ui_newTournament(object):
         self.buttonDraws.setText(_translate("newTournament", "½ - ½", None))
         self.buttonBlackWins.setText(_translate("newTournament", "0-1", None))
         self.buttonScore.setText(_translate("newTournament", "Score", None))
+        self.boxRR.setItemText(0, _translate("newTournament", "1", None))
+        self.boxRR.setItemText(1, _translate("newTournament", "2", None))
+        self.boxRR.setItemText(2, _translate("newTournament", "3", None))
+        self.boxRR.setItemText(3, _translate("newTournament", "4", None))
+        self.label.setText(_translate("newTournament", "RR:", None))
 

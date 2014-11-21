@@ -1,4 +1,5 @@
 import sys
+import copy
 from PyQt4 import *
 from Database import *
 from ui.mainWindow import *
@@ -160,7 +161,7 @@ class aboutPage(QtGui.QDialog, Ui_Sobre):
 #####
 
 class scoreWindow(QtGui.QDialog, Ui_rankDialog):
-    def __init__(self,players,points,totalpoints,rounds,black,white,parent=None):
+    def __init__(self,players,points,totalpoints,rounds,black,white,pvp,sberger,parent=None):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
 
@@ -172,8 +173,11 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
         self.tableRank.clear()
         self.tableRank.setHorizontalHeaderLabels(["Nome","Score","PvP","S-Berger","Brancas","Negras"])
 
-        self.pvp=[0 for i in range(0,len(players))]
-        self.sberger=[0 for i in range(0,len(players))]
+        #self.pvp=[0 for i in range(0,len(players))]
+        #self.sberger=[0 for i in range(0,len(players))]
+
+        self.pvp = pvp
+        self.sberger = sberger
 
         print(points)
         print(totalpoints)
@@ -267,10 +271,15 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.white=[]
         self.black=[]
 
+        self.rr=0
+
+        self.pvp=[]
+        self.sbeger=[]
+
         self.is_emparcered=0
         self.active_round=0
 
-        self.emparcerar()
+        #self.emparcerar()
 
     def whiteWins(self):
         rows=self.tableWidgetPlayers.selectedItems()
@@ -282,7 +291,7 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             self.points[self.active_round][index]=1
 
             for i in range(1,len(rows)):
-                for j in range(0,len(self.players)-1):
+                for j in range(0,len(self.players)):
                     if str(rows[i].data(0))==self.players[j]:
                         self.points[self.active_round][j]=0
                         self.white[j]+=1
@@ -317,11 +326,12 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.points[self.active_round][index]=0
 
         for i in range(1,len(rows)):
-            for j in range(0,len(self.players)-1):
+            for j in range(0,len(self.players)):
+                print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j])
                 if str(rows[i].data(0))==self.players[j]:
+                    print("match")
                     self.points[self.active_round][j]=1
                     self.black[j]+=1
-                    self.white[j]+=1
 
         self.showRound()
 
@@ -344,7 +354,7 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             self.points[self.active_round][index]=1
 
     def showScore(self):
-        score=scoreWindow(self.players,self.points,self.totalpoints,self.rounds,self.black,self.white)
+        score=scoreWindow(self.players,self.points,self.totalpoints,self.rounds,self.black,self.white,self.pvp,self.sberger)
         score.exec()
 
     def showRound(self):
@@ -466,6 +476,7 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.rounds=[]
         self.nrounds=0
 
+        # Emparceramento
         for i in range(len(self.players)-1):
             self.nrounds+=1
             mid = len(self.players) / 2
@@ -485,6 +496,47 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
                 self.rounds.append(l3)
 
             self.players.insert(1, self.players.pop())
+
+        self.rr=int(self.boxRR.currentText())
+
+        print("rr: "+str(self.rr))
+
+        if self.rr==2:
+            tmp=copy.deepcopy(self.rounds)
+            a=[]
+            for i in tmp:
+                #a.append(j[::-1])
+                self.rounds.append(i[::-1])
+            self.nrounds*=2
+
+        elif self.rr==3:
+            tmp=copy.deepcopy(self.rounds)
+            for i in tmp:
+                self.rounds.append(i[::-1])
+            for i in tmp:
+                self.rounds.append(i[::-1])
+                #self.rounds.append(i)
+            self.nrounds*=3
+
+        elif self.rr==4:
+            tmp=copy.deepcopy(self.rounds)
+            for i in tmp:
+                self.rounds.append(i[::-1])
+            for i in tmp:
+                self.rounds.append(i[::-1])
+                #self.rounds.append(i)
+            for i in tmp:
+                self.rounds.append(i[::-1])
+            self.nrounds*=4
+
+        print("rounds")
+        for i in self.rounds:
+            print(i)
+
+        print("\n")
+        print("nrounds:= "+str(len(self.rounds))+"\n")
+
+        print(self.rounds)
 
         self.is_emparcered=1
         self.labelRound.setText("Round: " + str(self.active_round+1))
