@@ -176,8 +176,11 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
         #self.pvp=[0 for i in range(0,len(players))]
         #self.sberger=[0 for i in range(0,len(players))]
 
+        nplayers=len(players)
+
         self.pvp = pvp
         self.sberger = sberger
+        spoints=[x for x in range(nplayers)]
 
         print(points)
         print(totalpoints)
@@ -190,6 +193,9 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
                     pass
 
         # S-Berger
+        for i in range(nplayers): # Loops for the player
+            for j in range(nplayers): # Loops for its opponent to calc the sberger score
+                spoints[i] += points[j] * int(sberger[i][j])
 
         # Score
         for i in range(0,len(totalpoints)):
@@ -212,8 +218,6 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
                         white[i]=white[j]
                         white[j]=t
 
-
-
         print(points)
         print(totalpoints)
         print(players)
@@ -226,9 +230,11 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
             tp=QtGui.QTableWidgetItem(str(totalpoints[i]))
             w=QtGui.QTableWidgetItem(str(white[i]))
             b=QtGui.QTableWidgetItem(str(black[i]))
+            sb=QtGui.QTableWidgetItem(str(spoints[i]))
 
             self.tableRank.setItem(i,0,p)
             self.tableRank.setItem(i,1,tp)
+            self.tableRank.setItem(i,3,sb)
             self.tableRank.setItem(i,4,w)
             self.tableRank.setItem(i,5,b)
 
@@ -289,22 +295,32 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
 
     def whiteWins(self):
         rows=self.tableWidgetPlayers.selectedItems()
+        sonne=[]
 
         index=self.players.index(rows[0].data(0))
+        sonne.append(int(index))
         if self.players[index]!="BYE":
             print("index="+str(index))
 
             self.points[self.active_round][index]=1
 
+            print("\n\nWhite Wins:")
             for i in range(1,len(rows)):
                 for j in range(0,len(self.players)):
+                    #print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j],"index",index,"...",self.players.index(rows[0].data(0)))
+
                     if str(rows[i].data(0))==self.players[j]:
+                        sonne.append(int(j))
+                        print("Match!!")
                         self.points[self.active_round][j]=0
                         self.white[j]+=1
+                        self.sberger[sonne[0]][sonne[1]]=1
+                        self.showRound()
 
                     else:
                         pass
 
+        print("")
         self.showRound()
 
     #######
@@ -321,17 +337,22 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.points[self.active_round][index]=0
 
         sonne=[]
+        sonne.append(int(index))
 
+        print("\n\nBlack wins:")
         for i in range(1,len(rows)):
             for j in range(0,len(self.players)):
-                #print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j])
+                #print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j],"index",index,"...",self.players.index(rows[0].data(0)))
                 if str(rows[i].data(0))==self.players[j]:
-                    sonne.append(j)
-                    #print("match")
+                    sonne.append(int(j))
+                    print("match")
                     self.points[self.active_round][j]=1
                     self.black[j]+=1
+                    self.sberger[sonne[1]][sonne[0]]=1
+                    self.showRound()
 
-        self.showRound()
+        print("")
+
 
     #######
     #
@@ -590,8 +611,13 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
 
         a=[]
         for i in range(len(self.players)):
-            self.sberger.append(0)
+            b=[x for x in range(len(self.players))]
+            self.sberger.append(b)
             a.append(0)
+            b=[]
+            for j in range(len(self.players)):
+                b.append(0)
+
         for i in range(len(self.players)):
             self.pvp.append(a)
 
