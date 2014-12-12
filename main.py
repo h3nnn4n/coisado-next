@@ -34,8 +34,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.tableWidgetPlayer.horizontalHeader().hide()
         self.tableWidgetPlayer.setSelectionBehavior(self.tableWidgetPlayer.SelectRows)
 
-        self.loadPlayer()
-        self.novoTorneio()
+        #self.loadPlayer()
+        #self.novoTorneio()
 
     def atualizar(self):
         print("Opening " + self.dbPath)
@@ -47,6 +47,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             data = self.db.selectAllPlayers()
             self.tableWidgetPlayer.clear()
+            n=self.tableWidgetPlayer.rowCount()
+            for i in range(n):
+                self.tableWidgetPlayer.removeRow(0)
             for i, item in enumerate(data):
                 self.tableWidgetPlayer.insertRow(i)
                 for j in range(0,4):
@@ -182,9 +185,13 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
         self.sberger = sberger
         spoints=[x for x in range(nplayers)]
 
+        print("====================")
         print(points)
         print(totalpoints)
         print(players)
+        print(white)
+        print(black)
+        print(sberger)
 
         # pvp
         for i in range(0,len(totalpoints)):
@@ -195,7 +202,10 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
         # S-Berger
         for i in range(nplayers): # Loops for the player
             for j in range(nplayers): # Loops for its opponent to calc the sberger score
-                spoints[i] += points[j] * int(sberger[i][j])
+                if i==j:
+                    pass
+                else:
+                    spoints[i] += totalpoints[j] * sberger[i][j]
 
         # Score
         for i in range(0,len(totalpoints)):
@@ -218,9 +228,13 @@ class scoreWindow(QtGui.QDialog, Ui_rankDialog):
                         white[i]=white[j]
                         white[j]=t
 
+        print("====================")
         print(points)
         print(totalpoints)
         print(players)
+        print(white)
+        print(black)
+        print(sberger)
 
         for i in range(0,len(players)):
 
@@ -275,6 +289,7 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
         self.rounds=[]
         self.totalpoints=[]
         self.white=[]
+        self.wins=[]
         self.nrounds=-1
 
         self.rr=0
@@ -307,13 +322,14 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             print("\n\nWhite Wins:")
             for i in range(1,len(rows)):
                 for j in range(0,len(self.players)):
-                    #print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j],"index",index,"...",self.players.index(rows[0].data(0)))
+                    print("i",i,"j",j,"row[i].data:",rows[i].data(0),"players[j]",self.players[j],"index",index,"...",self.players.index(rows[0].data(0)))
 
                     if str(rows[i].data(0))==self.players[j]:
                         sonne.append(int(j))
                         print("Match!!")
                         self.points[self.active_round][j]=0
-                        self.white[j]+=1
+                        self.white[index]+=1
+                        self.wins[index]+=1
                         self.sberger[sonne[0]][sonne[1]]=1
                         self.showRound()
 
@@ -348,6 +364,7 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
                     print("match")
                     self.points[self.active_round][j]=1
                     self.black[j]+=1
+                    self.wins[j]+=1
                     self.sberger[sonne[1]][sonne[0]]=1
                     self.showRound()
 
@@ -617,6 +634,9 @@ class newTournament(QtGui.QDialog, Ui_newTournament):
             b=[]
             for j in range(len(self.players)):
                 b.append(0)
+
+        print("sberger")
+        print(self.sberger)
 
         for i in range(len(self.players)):
             self.pvp.append(a)
